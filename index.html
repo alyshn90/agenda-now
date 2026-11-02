@@ -893,10 +893,12 @@ function rowParts(r){
     const cc=classColor(L.classId),sc=subjColor(L.subject);
     bar=pType==='teacher'?cc:sc;
     const tn=tName(L);
-    tag=`<span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0" style="color:${bar};background:${bar}1f;border:1px solid ${bar}40">${r.period?r.period+'. Ders':'Ders'}</span>`;
+    tag=`<span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0" style="color:${bar};background:${bar}18;border:1px solid ${bar}40">${r.period?r.period+'. Ders':'Ders'}</span>`;
+    
+    // Yazı renkleri artık temanın kendi metin rengi (siyah/beyaz) olacak
     title=pType==='teacher'
-      ?`<span style="color:${cc}">${esc(L.classId)}</span><span class="faint mx-1">•</span><span style="color:${sc}">${esc(L.subject)}</span>`
-      :`<span style="color:${sc}">${esc(L.subject)}</span><span class="faint mx-1">•</span><span class="txt2">${esc(tn)}</span>`;
+      ?`<span class="font-bold txt">${esc(L.classId)}</span><span class="faint mx-1">•</span><span class="txt2">${esc(L.subject)}</span>`
+      :`<span class="font-bold txt">${esc(L.subject)}</span><span class="faint mx-1">•</span><span class="txt2">${esc(tn)}</span>`;
   }else if(r.kind==='free'){
     bar='#64748b';
     tag=`<span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 chip muted">${r.period}. Ders</span>`;
@@ -1528,9 +1530,9 @@ function renderMnMatrix(){
                const col = pType === 'teacher' ? classColor(x.r.classId) : subjColor(x.r.subject);
                const main = pType === 'teacher' ? x.r.classId : x.r.subject;
                const sub = pType === 'teacher' ? x.r.subject : x.r.teacherName;
-               cellInner += `<div class="matrix-card" onclick="openCellModal(${d},${p},event,${slot.s},${slot.e})" style="background:${col}18;border-color:${col}55;color:${col}">
-                  <div class="font-bold text-[10px] leading-tight break-words">${esc(main)}</div>
-                  <div class="text-[9px] opacity-80 leading-tight break-words mt-0.5">${esc(sub)}</div>
+                              cellInner += `<div class="matrix-card" onclick="openCellModal(${d},${p},event,${slot.s},${slot.e})" style="background:${col}12;border-left: 3px solid ${col}; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                  <div class="font-bold text-[10px] leading-tight break-words" style="color:var(--text);">${esc(main)}</div>
+                  <div class="text-[9px] leading-tight break-words opacity-80" style="color:var(--text2);">${esc(sub)}</div>
                </div>`;
             } else {
                cellInner += `<div class="matrix-card empty-card" onclick="openCellModal(${d},${p},event,${slot.s},${slot.e})">
