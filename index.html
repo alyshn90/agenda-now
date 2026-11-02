@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
-<script>try{if(localStorage.getItem('oa_theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+<script>try{if(localStorage.getItem('oa_theme')!=='dark')document.documentElement.classList.add('light')}catch(e){}</script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script src="https://unpkg.com/lucide@0.454.0"></script>
 <!-- PNG İndirme Kütüphanesi -->
@@ -66,6 +66,22 @@
   .matrix-table td.cell:hover .empty-plus{opacity:1}
   .matrix-card{padding:4px;border-radius:6px;margin-bottom:4px;border:1px solid;font-size:9px;line-height:1.2;transition:transform .1s;cursor:pointer;word-break:break-word;display:flex;flex-direction:column;gap:2px;}
   .matrix-card:hover{transform:scale(1.02)}
+    /* Dolu Kartlar İçin Standart Yükseklik */
+  .matrix-card { 
+    min-height: 65px; /* Kartların eşit ve ferah görünmesi için */
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+  }
+  
+  /* Boş Kartlar İçin (Ders olmayan) Yarım Yükseklik */
+  .empty-card { 
+    min-height: 32px !important; 
+    height: 32px !important;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+  }
   .empty-card { border-style: dashed !important; background: transparent !important; height: 40px; display: flex; align-items: center; justify-content: center; opacity: 0.5; }
 </style>
 </head>
@@ -1107,6 +1123,7 @@ function renderDay(){
 }
 
 /* --- Haftalık Matris (Ana Ekran) --- */
+/* --- Haftalık Matris (Ana Ekran - YENİ TASARIM) --- */
 function renderMatrix(){
   const wrap=document.getElementById('matrixWrap');
   if(!wrap)return;
@@ -1146,10 +1163,10 @@ function renderMatrix(){
 
     if(slots.length === 0){
       h += `<tr>
-        <td class="p-1 text-center font-mono font-bold muted text-[9px] border-r leading-tight" style="border-color:var(--border)">
+        <td class="p-1 text-center font-mono font-bold muted text-[9px] border-r leading-tight align-middle" style="border-color:var(--border)">
           ${p}.<div class="font-normal faint">—</div>
         </td>
-        ${cols.map(i => `<td class="p-0.5"><div class="p-1 rounded-md text-center faint" style="border:1px dashed var(--border)">·</div></td>`).join('')}
+        ${cols.map(i => `<td class="p-0.5"><div class="matrix-card empty-card" style="border:1px dashed var(--border); opacity:0.5;"><div class="text-center faint">·</div></div></td>`).join('')}
       </tr>`;
     } else {
       slots.forEach((slot, index) => {
@@ -1170,12 +1187,20 @@ function renderMatrix(){
             const col = pType==='teacher' ? classColor(L.classId) : subjColor(L.subject);
             const main = pType==='teacher' ? L.classId : L.subject;
             const sub = pType==='teacher' ? L.subject : tName(L);
-            h += `<td class="p-0.5 align-top"><div class="p-1 rounded-md leading-tight" style="background:${col}18;border:1px solid ${col}45">
-              <div class="font-bold truncate" style="color:${col}">${esc(main)}</div>
-              <div class="truncate faint text-[9px]">${esc(sub)}</div>
-            </div></td>`;
+            
+            h += `<td class="p-0.5 align-top">
+                    <div class="matrix-card" style="background:${col}12; border-left: 3px solid ${col}; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                      <div class="font-bold text-[10px] leading-tight break-words" style="color:var(--text);">${esc(main)}</div>
+                      <div class="text-[9px] leading-tight break-words opacity-80 mt-1" style="color:var(--text2);">${esc(sub)}</div>
+                    </div>
+                  </td>`;
           } else {
-            h += `<td class="p-0.5"><div class="p-1 rounded-md text-center faint" style="border:1px dashed var(--border)">·</div></td>`;
+            // Boş Kartlar (Yarım boy)
+            h += `<td class="p-0.5 align-top">
+                    <div class="matrix-card empty-card" style="border:1px dashed var(--border); opacity:0.5;">
+                      <div class="text-center faint">·</div>
+                    </div>
+                  </td>`;
           }
         });
         h += `</tr>`;
@@ -2565,8 +2590,17 @@ window.addEventListener('DOMContentLoaded',()=>{
   dayIdx=now().di;
   renderAll();
   
-  // 5. Açılış Animasyonunu Başlat
-  runSplashScreen();
+    // 5. Açılış Animasyonunu Sadece İlk Açılışta Başlat
+  if (!sessionStorage.getItem('agenda_splash_shown')) {
+    runSplashScreen();
+    sessionStorage.setItem('agenda_splash_shown', 'true');
+  } else {
+    // Eğer sayfa yenilendiyse animasyonu atla ve hedef logoyu hemen görünür yap
+    const targetIcon = document.getElementById('wsIcon');
+    if(targetIcon) targetIcon.style.opacity = '1';
+    const splash = document.getElementById('splashScreen');
+    if(splash) splash.style.display = 'none';
+  }
   
   // 6. Saati Başlat
   tick();
