@@ -1,6 +1,6 @@
 {
   "name": "Agenda Now",
-  "short_name": "Agenda Now",
+  "short_name": "AN",
   "description": "Ders, teneffüs ve nöbet takibini kolaylaştıran akıllı asistan.",
   "start_url": "./index.html",
   "scope": "./",
