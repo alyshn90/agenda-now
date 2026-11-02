@@ -66,21 +66,31 @@
   .matrix-table td.cell:hover .empty-plus{opacity:1}
   .matrix-card{padding:4px;border-radius:6px;margin-bottom:4px;border:1px solid;font-size:9px;line-height:1.2;transition:transform .1s;cursor:pointer;word-break:break-word;display:flex;flex-direction:column;gap:2px;}
   .matrix-card:hover{transform:scale(1.02)}
-    /* Dolu Kartlar İçin Standart Yükseklik */
+     /* Dolu Kartlar (Ders olan günler) */
   .matrix-card { 
-    min-height: 65px; /* Kartların eşit ve ferah görünmesi için */
+    padding: 4px 6px; /* İç boşluğu azalttık, yazıya daha çok yer açıldı */
+    border-radius: 6px; 
+    margin-bottom: 2px; 
+    border: 1px solid; 
+    transition: transform .1s; 
+    cursor: pointer; 
+    word-break: break-word; 
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
+    min-height: 48px; /* Yükseklik 65px'ten 48px'e düşürüldü, çok daha şık durur */
+    line-height: 1.1;
   }
   
-  /* Boş Kartlar İçin (Ders olmayan) Yarım Yükseklik */
+  /* Boş Kartlar (Ders olmayan günler) */
   .empty-card { 
-    min-height: 32px !important; 
-    height: 32px !important;
+    min-height: 24px !important; /* Dolu kartın tam yarısı (24px) */
+    height: 24px !important;
+    padding: 0 !important;
     display: flex; 
     align-items: center; 
     justify-content: center; 
+    margin-bottom: 2px;
   }
   .empty-card { border-style: dashed !important; background: transparent !important; height: 40px; display: flex; align-items: center; justify-content: center; opacity: 0.5; }
 </style>
@@ -1190,8 +1200,8 @@ function renderMatrix(){
             
             h += `<td class="p-0.5 align-top">
                     <div class="matrix-card" style="background:${col}12; border-left: 3px solid ${col}; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-                      <div class="font-bold text-[10px] leading-tight break-words" style="color:var(--text);">${esc(main)}</div>
-                      <div class="text-[9px] leading-tight break-words opacity-80 mt-1" style="color:var(--text2);">${esc(sub)}</div>
+                      <div class="font-bold text-[12px] leading-tight break-words" style="color:var(--text);">${esc(main)}</div>
+                      <div class="text-[10px] leading-tight break-words opacity-80 mt-1" style="color:var(--text2);">${esc(sub)}</div>
                     </div>
                   </td>`;
           } else {
