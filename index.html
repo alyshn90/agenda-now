@@ -63,7 +63,7 @@
   .matrix-table td.cell:hover{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 5%, var(--card2))}
   .matrix-table td.cell .empty-plus{opacity:0;transition:opacity .15s;display:flex;align-items:center;justify-content:center;height:100%;font-size:20px;color:var(--faint)}
   .matrix-table td.cell:hover .empty-plus{opacity:1}
-  .matrix-card{padding:6px;border-radius:6px;margin-bottom:4px;border:1px solid;font-size:11px;line-height:1.2;transition:transform .1s;cursor:pointer}
+  .matrix-card{padding:4px;border-radius:6px;margin-bottom:4px;border:1px solid;font-size:9px;line-height:1.2;transition:transform .1s;cursor:pointer;word-break:break-word;display:flex;flex-direction:column;gap:2px;}
   .matrix-card:hover{transform:scale(1.02)}
   .empty-card { border-style: dashed !important; background: transparent !important; height: 40px; display: flex; align-items: center; justify-content: center; opacity: 0.5; }
 </style>
@@ -1266,13 +1266,27 @@ function downloadPNG(elementId, fileName){
   const el = document.getElementById(elementId);
   if(!el) return;
   
-  // Arka plan rengini al (tema desteği için)
+  // Butona tıklandığında kullanıcıya bilgi ver
+  if(typeof toast === 'function') toast('Görsel hazırlanıyor...', 'info');
+
+  // Tema rengini al
   const bg = getComputedStyle(document.documentElement).getPropertyValue('--card').trim() || '#0f172a';
   
+  // Kütüphaneye tüm boyutları zorla tanıt (özellikle Günün Programı için)
+  const w = el.offsetWidth;
+  const h = el.offsetHeight;
+
   html2canvas(el, {
     backgroundColor: bg,
-    scale: 2, // Yüksek çözünürlük
-    useCORS: true
+    scale: 2, // Yüksek kalite
+    useCORS: true,
+    allowTaint: true,
+    width: w,
+    height: h,
+    windowWidth: document.documentElement.offsetWidth,
+    windowHeight: document.documentElement.offsetHeight,
+    scrollX: 0,
+    scrollY: 0
   }).then(canvas => {
     const a = document.createElement('a');
     a.href = canvas.toDataURL('image/png');
@@ -1283,7 +1297,7 @@ function downloadPNG(elementId, fileName){
     if(typeof toast === 'function') toast('Görsel indirildi', 'success');
   }).catch(err => {
     console.error('PNG Hatası:', err);
-    if(typeof toast === 'function') toast('Görsel indirilemedi', 'error');
+    if(typeof toast === 'function') toast('Görsel indirilemedi, konsolu kontrol edin.', 'error');
   });
 }
 
