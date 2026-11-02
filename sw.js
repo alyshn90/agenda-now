@@ -1,5 +1,5 @@
-const CACHE_NAME = 'agenda-now-v2';
-const CDN_CACHE = 'agenda-cdn-v2';
+const CACHE_NAME = 'agenda-now-v3';
+const CDN_CACHE = 'agenda-cdn-v3';
 
 // Önbelleğe alınacak dış kaynaklar (Uygulamanın hızlı açılması ve internetsiz çalışması için)
 const CDN_URLS = [
