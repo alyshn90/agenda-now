@@ -570,7 +570,6 @@ function bellFor(u,day){
     const l=(ex.byDay&&ex.byDay[day])||ex.all||[];
     if(l.length){
       const sorted = l.map((x,i)=>({s:x.s,e:x.e,period:i+1})).sort((a,b)=>a.s-b.s);
-      sorted.forEach((x,i)=>x.period=i+1);
       return{lessons:sorted,ceremony:ex.ceremony||null,source:'json',name:ex.name};
     }
   }
@@ -703,14 +702,31 @@ function dayRows(day){
     }
   });
   
-    // 4. Boşlukları kurallara göre doldur (30dk'ya kadar Teneffüs, 30dk'dan büyükse Öğle Arası)
+     // 4. Boşlukları kurallara göre doldur (Teneffüs numarası bir önceki dersin numarası olur)
   const rows = [];
-  let bn = 0;
-  merged.forEach(seg => {
+  let fallbackBn = 0;
+  
+  merged.forEach((seg, idx) => {
     if(seg.kind === 'gap') {
       const dur = seg.e - seg.s;
-      if(dur > 30) rows.push({kind:'lunch', s:seg.s, e:seg.e});
-      else if(dur > 0) { bn++; rows.push({kind:'break', s:seg.s, e:seg.e, no:bn}); }
+      if(dur > 30) {
+        rows.push({kind:'lunch', s:seg.s, e:seg.e});
+      } else if(dur > 0) {
+        let prevPeriod = null;
+        // Kendisinden önceki dersin veya boş dersin period numarasını al
+        if(idx > 0) {
+          const prev = merged[idx-1];
+          if(prev.period) prevPeriod = prev.period;
+        }
+        
+        // Eğer bulunamazsa (günün en başında bir boşluksa) kendi sayacını kullan
+        if (!prevPeriod) {
+          fallbackBn++;
+          prevPeriod = fallbackBn;
+        }
+        
+        rows.push({kind:'break', s:seg.s, e:seg.e, no: prevPeriod});
+      }
     } else {
       rows.push(seg);
     }
