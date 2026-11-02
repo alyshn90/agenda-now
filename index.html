@@ -1931,27 +1931,47 @@ function jsonPanel(){
 
 function templateObj(){
   return{
-    "_aciklama":{"genel":"Bir öğretmen için nesne. Birden fazla için liste kullanın.","ogretmen":"kod, ad, brans, birim","zil":"Birim adı → [\"SS:DD-SS:DD\"]","program":"gun, ders, baslangic, bitis, sinif, dersAdi, derslik, birim"},
+    "_aciklama":{
+      "genel":"Bir öğretmen için nesne. Birden fazla için liste kullanın.",
+      "ogretmen":"kod: benzersiz kod, ad: ad soyad, brans: branş, birim: zil takibi için birim adı",
+      "zil":"Birim adı → [\"SS:DD-SS:DD\"]",
+      "program":"gun (Pazartesi, Salı vb.), ders (kaçıncı ders), baslangic, bitis, sinif, dersAdi, derslik, birim",
+      "nobet":"gun, yer"
+    },
     "ogretmen":{"kod":"","ad":"","brans":"","birim":""},
-    "zil":{"BİRİM ADI":["SS:DD-SS:DD"]},
-    "program":[{"gun":"","ders":0,"baslangic":"","bitis":"","sinif":"","dersAdi":"","derslik":"","birim":""}],
-    "nobet":[{"gun":"","yer":""}]
+    "zil":{"Ortak":["09:00-09:40","09:50-10:30"]},
+    "program":[
+      {"gun":"Pazartesi","ders":1,"baslangic":"09:00","bitis":"09:40","sinif":"9-A","dersAdi":"Matematik","derslik":"A-201","birim":"Ortak"}
+    ],
+    "nobet":[{"gun":"Pazartesi","yer":"Bahçe"}]
   };
 }
 function classTemplateObj(){
   return{
-    "_aciklama":{"genel":"Bir sınıf için nesne.","sinif":"ad, birim, derslik","zil":"İsteğe bağlı.","program":"gun, ders, baslangic, bitis, dersAdi, ogretmen, derslik"},
+    "_aciklama":{
+      "genel":"Bir sınıf için nesne. Birden fazla için liste kullanın.",
+      "sinif":"ad: sınıf adı, birim: zil takibi için birim adı, derslik: ana derslik",
+      "zil":"Birim adı → [\"SS:DD-SS:DD\"]",
+      "program":"gun (Pazartesi, Salı vb.), ders, baslangic, bitis, dersAdi, ogretmen, derslik"
+    },
     "sinif":{"ad":"","birim":"","derslik":""},
-    "zil":{"BİRİM ADI":["SS:DD-SS:DD"]},
-    "program":[{"gun":"","ders":0,"baslangic":"","bitis":"","dersAdi":"","ogretmen":"","derslik":""}]
+    "zil":{"Ortak":["09:00-09:40","09:50-10:30"]},
+    "program":[
+      {"gun":"Pazartesi","ders":1,"baslangic":"09:00","bitis":"09:40","dersAdi":"Matematik","ogretmen":"Ali Yılmaz","derslik":"A-201"}
+    ]
   };
 }
 function timeTemplateObj(){
   return{
-    "_aciklama":{"genel":"Zaman Çizelgesi (Zil) - Aynı derse birden fazla saat eklenebilir.","zamanCizelgesi":"ders no, baslangic, bitis"},
+    "_aciklama":{
+      "genel":"Zaman Çizelgesi (Zil) - Aynı derse birden fazla saat eklenebilir.",
+      "zamanCizelgesi":"ders: kaçıncı ders, baslangic, bitis"
+    },
     "zamanCizelgesi":[
       {"ders":1,"baslangic":"09:00","bitis":"09:40"},
-      {"ders":2,"baslangic":"09:50","bitis":"10:30"}
+      {"ders":2,"baslangic":"09:50","bitis":"10:30"},
+      {"ders":5,"baslangic":"12:50","bitis":"13:30"},
+      {"ders":5,"baslangic":"13:20","bitis":"14:00"}
     ]
   };
 }
