@@ -2556,10 +2556,10 @@ async function setupPWA(){
   try{
     if('caches' in window){
       const[b1,b2]=await Promise.all([drawLogo(192),drawLogo(512)]);
-      const cache=await caches.open('oa-icons-v3');
+      const cache=await caches.open('oa-icons-v4');
       const h={headers:{'Content-Type':'image/png'}},u=p=>new URL(p,location.href).href;
-      await cache.put(u('icon-192.png'),new Response(b1,h));
-      await cache.put(u('icon-512.png'),new Response(b2,h));
+      await cache.put(u('logo-192.png'),new Response(b1,h));
+await cache.put(u('logo-512.png'),new Response(b2,h));
       await cache.put(u('apple-touch-icon.png'),new Response(b1,h));
     }
   }catch(e){ console.log('Icon cache error:', e); }
