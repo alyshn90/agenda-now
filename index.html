@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#020617;--bg2:#0b1220;--card:#0f172a;--card2:#151f33;--border:#233047;--border2:#334361;--text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--faint:#64748b;--chip:#192438;--accent:#6366f1}
+  :root{--bg:#020617;--bg2:#0b1220;--card:#07f172a;--card2:#151f33;--border:#233047;--border2:#334361;--text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--faint:#64748b;--chip:#192438;--accent:#6366f1}
   html.light{--bg:#eef2f7;--bg2:#e2e8f0;--card:#fff;--card2:#f8fafc;--border:#cfd8e5;--border2:#94a3b8;--text:#0f172a;--text2:#334155;--muted:#475569;--faint:#64748b;--chip:#f1f5f9;--accent:#4f46e5;color-scheme:light}
   body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent;background-image:radial-gradient(900px 480px at 88% -8%,color-mix(in srgb,var(--accent) 15%,transparent),transparent 60%);background-attachment:fixed}
   .font-display{font-family:'Sora','Plus Jakarta Sans',sans-serif;letter-spacing:-.02em}
@@ -1050,12 +1050,48 @@ function renderDay(){
   const after=cur?cur.e:n.min;
   const next=today?(rows.find(r=>r.kind==='lesson'&&r!==cur&&r.s>=after)):null;
   
+  // Ders dışındaki (teneffüs, öğle arası vb.) durumlar için sabit renkler
+  const STYLES = {
+    free:   { bg: 'color-mix(in srgb, #64748b 6%, var(--card2))', border: 'var(--border)' },
+    break:  { bg: 'rgba(20,184,166,0.05)',  border: 'rgba(20,184,166,0.2)' },  // Teneffüs (Teal)
+    lunch:  { bg: 'rgba(245,158,11,0.06)',  border: 'rgba(245,158,11,0.2)' },  // Öğle Arası (Amber)
+    ara:    { bg: 'rgba(168,85,247,0.05)',  border: 'rgba(168,85,247,0.2)' },  // Ara (Mor)
+    ceremony: { bg: 'rgba(244,63,94,0.06)', border: 'rgba(244,63,94,0.2)' }    // Tören (Kırmızı)
+  };
+
   rows.forEach(r=>{
     const state=r===cur?'now':r===next?'next':(today&&n.min>=r.e)?'past':'plan';
     const el=document.createElement('div');
-    el.className='px-2.5 py-2 rounded-xl flex items-center gap-2.5 transition'+(state==='now'?' row-now':state==='next'?' row-next':state==='past'?' row-past':'');
-    el.style.background='var(--card2)';
-    if(state!=='now'&&state!=='next')el.style.border='1px solid var(--border)';
+    
+    // Animasyon sınıfları
+    el.className='px-2.5 py-2 rounded-xl flex items-center gap-2.5 transition'+
+                 (state==='now'?' row-now':state==='next'?' row-next':state==='past'?' row-past':'');
+
+    // --- YENİ: Haftalık Görünüm ile Aynı Renk Mantığı ---
+    if (r.kind === 'lesson') {
+      const L = r.r;
+      // Haftalık tablodaki renk algoritmasını burada da çağırıyoruz
+      const col = pType === 'teacher' ? classColor(L.classId) : subjColor(L.subject);
+      
+      // Arka plan: Rengin %8 opaklığı (hafif tinted)
+      // Sol kenarlık: Rengin kendisi (kalın çizgi)
+      el.style.background = `color-mix(in srgb, ${col} 8%, var(--card2))`;
+      if (state !== 'now' && state !== 'next') {
+        el.style.border = `1px solid var(--border)`;
+      }
+      el.style.borderLeft = `4px solid ${col}`;
+
+    } else {
+      // Ders değilse (Teneffüs, Boş Ders, Öğle Arası vb.)
+      const st = STYLES[r.kind] || STYLES.free;
+      el.style.background = st.bg;
+      if (state !== 'now' && state !== 'next') {
+        el.style.border = `1px solid ${st.border}`;
+      }
+      // Ders dışındakilerin sol kenarlığı çok daha ince ve silik olsun
+      el.style.borderLeft = `4px solid ${st.border}`;
+    }
+
     el.innerHTML=rowInner(r,state);
     list.appendChild(el);
   });
