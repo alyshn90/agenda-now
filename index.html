@@ -10,8 +10,8 @@
 <meta name="theme-color" content="#4f46e5">
 <meta name="description" content="Ders, teneffüs ve nöbet takip asistanı">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="logo-192.png" type="image/png">
+<link rel="apple-touch-icon" href="logo-192.png">
 <script>try{if(localStorage.getItem('oa_theme')!=='dark')document.documentElement.classList.add('light')}catch(e){}</script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#020617;--bg2:#0b1220;--card:#07f172a;--card2:#151f33;--border:#233047;--border2:#334361;--text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--faint:#64748b;--chip:#192438;--accent:#6366f1}
+  :root{--bg:#020617;--bg2:#0b1220;--card:#0f172a;--card2:#151f33;--border:#233047;--border2:#334361;--text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--faint:#64748b;--chip:#192438;--accent:#6366f1}
   html.light{--bg:#eef2f7;--bg2:#e2e8f0;--card:#fff;--card2:#f8fafc;--border:#cfd8e5;--border2:#94a3b8;--text:#0f172a;--text2:#334155;--muted:#475569;--faint:#64748b;--chip:#f1f5f9;--accent:#4f46e5;color-scheme:light}
   body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent;background-image:radial-gradient(900px 480px at 88% -8%,color-mix(in srgb,var(--accent) 15%,transparent),transparent 60%);background-attachment:fixed}
   .font-display{font-family:'Sora','Plus Jakarta Sans',sans-serif;letter-spacing:-.02em}
@@ -465,7 +465,7 @@ const q=s=>String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 const attr=s=>esc(q(s));
 
 /* --- Kalıcı Renk Paleti --- */
-const PALETTE=['#6366F1','#0EA5E9','#10B981','#F59E0B','#EC4899','#8B5CF6','#EF4444','#14B8A6','#D97706','#06B6D4','#A855F7','#22C55E','#F43F5E','#8B5A2B','#2E8B57','#4169E1','#D2691E','#9932CC'];
+const PALETTE=['#DC2626','#2563EB','#16A34A','#EAB308','#9333EA','#EA580C','#0891B2','#DB2777','#84CC16','#92400E','#1E3A8A','#64748B','#C026D3'];
 function getPersistentColor(keyStr, type){
   if(!D.colorMap) D.colorMap={};
   const k = type + '_' + lowTR(keyStr);
@@ -476,7 +476,7 @@ function getPersistentColor(keyStr, type){
   let color = PALETTE.find(c => !used.includes(c));
   if(!color) {
     // Tüm palet bittiyse rastgele üret
-    color = '#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+    const rgb=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),mk=hue=>{const f=n=>{const k=(n+hue/30)%12,a=0.7*0.42*(1-0.42/0.42*0+0)*0+0.7*Math.min(0.42,0.58);return Math.round(255*(0.42-a*Math.max(-1,Math.min(k-3,9-k,1)))).toString(16).padStart(2,'0');};return '#'+f(0)+f(8)+f(4);};let best='',bd=-1;for(let k=0;k<24;k++){const c=mk(k*15),dd=Math.min(999,...used.map(u=>{const a=rgb(c),b=rgb(u);return Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);}));if(dd>bd){bd=dd;best=c;}}color=best;
   }
   D.colorMap[k] = color;
   return color;
@@ -669,10 +669,10 @@ function getPersistentColor(keyStr, type){
 /* ============================================================
    PART 3B: Veri katmanı (v9) — her kişinin kendi zili ve dersleri kendi içinde
    ============================================================ */
-function emptyData(ws){return{v:9,schoolName:WS[ws].def,teachers:[],classes:[],duty:[],defaultTeacher:'',defaultClass:'',colorMap:{}};}
+function emptyData(ws){return{v:9,schoolName:WS[ws].def,teachers:[],classes:[],duty:[],defaultTeacher:'',defaultClass:'',colorMap:{},colorV:2};}
 function loadData(ws){
   let d=null;try{const r=localStorage.getItem(SKEY+ws);if(r)d=JSON.parse(r);}catch(e){try{const r=localStorage.getItem(SKEY+ws);if(r){localStorage.setItem(SKEY+ws+'_bozuk_'+Date.now(),r);setTimeout(()=>toast('Kayıtlı veri okunamadı; ham kopyası yedeklendi','error'),800);}}catch(_){}}
-  d=Object.assign(emptyData(ws),d||{});
+  const stale=!!d&&d.colorV!==2;d=Object.assign(emptyData(ws),d||{});if(stale){d.colorMap={};d.colorV=2;}
   ['teachers','classes','duty'].forEach(k=>{if(!Array.isArray(d[k]))d[k]=[];});
   d.teachers.concat(d.classes).forEach(p=>{if(!Array.isArray(p.bell))p.bell=[];if(!Array.isArray(p.rows))p.rows=[];});
   if(!d.colorMap)d.colorMap={};
@@ -1165,7 +1165,7 @@ function renderMatrix(){
             const sub = pType==='teacher' ? L.subject : tName(L);
             
             h += `<td class="p-0.5 align-top">
-                    <div class="matrix-card" style="background:${col}12; border-left: 3px solid ${col}; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                    <div class="matrix-card" style="background:${col}26; border-left: 5px solid ${col}; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);">
                       <div class="trunc font-bold text-[12px] leading-tight" style="color:var(--text);">${esc(main)}</div>
                       <div class="trunc text-[10px] leading-tight opacity-80 mt-1" style="color:var(--text2);">${esc(sub)}</div>
                     </div>
@@ -1485,7 +1485,7 @@ function renderMnMatrix(){
         const L=AN.cellLesson(p.bell,p.rows,dn,k,sl.s);
         if(L){
           const col=pType==='teacher'?classColor(L.classId):subjColor(L.subject);
-          h+=`<td class="cell"><div class="matrix-card" onclick="openCellModal(${d},${k},${sl.s})" style="background:${col}12;border-left:3px solid ${col};border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><div class="trunc font-bold text-[10px]" style="color:var(--text)">${esc(pType==='teacher'?L.classId:L.subject)}</div><div class="trunc text-[9px] opacity-80" style="color:var(--text2)">${esc(pType==='teacher'?L.subject:L.teacherName)}</div></div></td>`;
+          h+=`<td class="cell"><div class="matrix-card" onclick="openCellModal(${d},${k},${sl.s})" style="background:${col}26;border-left:5px solid ${col};border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)"><div class="trunc font-bold text-[10px]" style="color:var(--text)">${esc(pType==='teacher'?L.classId:L.subject)}</div><div class="trunc text-[9px] opacity-80" style="color:var(--text2)">${esc(pType==='teacher'?L.subject:L.teacherName)}</div></div></td>`;
         }else h+=`<td class="cell"><div class="matrix-card empty-card" onclick="openCellModal(${d},${k},${sl.s})"><div class="empty-plus">+</div></div></td>`;
       });
       h+='</tr>';
@@ -2121,6 +2121,88 @@ document.addEventListener('DOMContentLoaded', () => {
     if(el) observer.observe(el, { attributes: true, attributeFilter: ['class'] });
   });
 });
+</script>
+<script>
+/* Android uzun basış kısayolları */
+window.addEventListener('load',()=>setTimeout(()=>{
+  try{
+    const sk=new URLSearchParams(location.search).get('sk');if(!sk)return;
+    if(sk==='bugun')goToday();
+    else if(sk==='hafta'){const m=document.getElementById('matrixCard');if(m)m.scrollIntoView({behavior:'smooth',block:'start'});}
+    else if(sk==='program'){openSettings();setTab('program');}
+    else if(sk==='json'){openSettings();setTab('json');}
+    history.replaceState(null,'',location.pathname);
+  }catch(e){}
+},700));
+</script>
+<script>
+/* ===== KULLANIM REHBERİ: Hakkında penceresine düğme ekler, kendi penceresini açar ===== */
+(function(){
+  const G=[
+    {t:'1. Ana ekranı tanıyın',l:[
+      'Üstteki kişi simgesi öğretmen, şapka simgesi sınıf görünümüdür. Yanındaki listeden kişiyi seçin.',
+      '<b>Canlı durum kartı</b>: şu an hangi derste olduğunuzu, kalan süreyi, sıradaki dersi ve nöbetiniz varsa nöbet uyarısını gösterir.',
+      'Gün sekmelerinden (Pzt, Sal…) başka günlerin programına bakın. Bugünün yanında yeşil nokta vardır.',
+      '<b>Günün programı</b>: ders, boş ders, teneffüs ve öğle arası sırayla listelenir. PNG düğmesiyle görüntüsünü indirebilirsiniz.',
+      'Alttaki <b>haftalık tablo</b> tüm haftayı gösterir. Bir periyodun iki başlama saati varsa her saat ayrı satırda görünür.',
+      'Üstte çan: zil sesi, güneş: tema, dişli: ayarlar. Okul, Kurs ve Özel Ders alanları ayrı veri tutar.']},
+    {t:'2. JSON ile öğretmen ve sınıf programı yükleme',l:[
+      'Ayarlar (dişli) → <b>JSON Ekle</b> sekmesini açın.',
+      '<b>Öğretmen</b> veya <b>Sınıf</b> şablonunun "Kopyala" düğmesine basın.',
+      'Şablonu ve program fotoğrafınızı (ya da belgenizi) bir yapay zekâya (ChatGPT, Claude vb.) verin. Şablonun içindeki talimat nasıl dolduracağını anlatır.',
+      'Yapay zekânın verdiği JSON\'u kopyalayıp "Yapıştır" ile alana koyun.',
+      '<b>Üzerine Ekle</b>: yalnızca dosyadaki kişileri ekler veya günceller, diğerlerine dokunmaz. <b>Sıfırdan Ekle</b>: tüm veriyi silip yeniden yükler (önce sorar).',
+      'Kırmızı satırlar hatadır (o satır atlanır), sarı satırlar uyarıdır. Yükleme bitince kişi seçilir ve Program sekmesi açılır.',
+      'İpuçları: bir periyodun iki başlama saati varsa zile <i>5. 12:50-13:30 / 13:20-14:00</i> yazılır ve dersin hangi saatte olduğu <i>baslangic</i> ile belirtilir. İki periyotluk (blok) dersler iki ardışık satır olur. Birden çok kişiyi tek dosyada <i>ogretmenler</i> veya <i>siniflar</i> listesiyle yükleyebilirsiniz.']},
+    {t:'3. Elle program ekleme',l:[
+      '<b>Öğretmen</b>: Ayarlar → <b>Öğretmenler</b> → "Elle öğretmen ekle" bölümüne adı ve branşı yazıp Ekle\'ye basın.',
+      '<b>Sınıf</b>: Ayarlar → <b>Sınıflar</b> → sınıf adını (9-A gibi) yazıp Ekle\'ye basın.',
+      '<b>Program</b> sekmesine geçin. Üstte hangi kişiyi düzenlediğiniz yazar, ana ekranda seçili olan kişidir.',
+      '<b>Zil saatleri</b> düğmesi: "+ Periyot ekle" deyin, başlangıç saatini seçin. Süre (varsayılan 40 dk) girilince bitiş otomatik hesaplanır. Aynı periyoda ikinci saat için "+ ikinci saat aralığı ekle"ye basın. Kaydedin.',
+      'Tabloda boş bir kutudaki <b>+</b>\'ya dokunun. Öğretmen programında sınıfı, sınıf programında öğretmen adını yazın; dersi ve türü (ders / etkinlik) seçip Kaydet\'e basın.',
+      'Her öğretmenin ve her sınıfın zili ayrıdır; birini değiştirmek diğerlerini etkilemez.']},
+    {t:'4. Yüklü programları düzenleme',l:[
+      'Tablodaki bir derse dokunun: değiştirebilir ya da silebilirsiniz. Aynı gün ve periyotta tek ders olabilir.',
+      'Zil saatini değiştirmek için "Zil saatleri" düğmesini ya da soldaki saat sütununu kullanın. Dersler yeni saate otomatik uyar.',
+      'Öğretmen veya sınıfın adını/branşını değiştirmek için listedeki <b>kalem</b> düğmesine basın.',
+      '<b>Kopyala</b> ve <b>indir</b> düğmeleri o kişinin programını yedekler. Aynı JSON\'u tekrar yükleyebilirsiniz.',
+      'Çöp kutusu kişiyi tamamen siler (önce sorar). Yıldız, uygulama açılınca hangi kişinin görüneceğini belirler.']},
+    {t:'5. Nöbet ekleme',l:[
+      'Ayarlar → <b>Öğretmenler</b> → ilgili kişinin satırındaki <b>kalkan</b> simgesine basın.',
+      'Nöbetçi olduğunuz günlerin yerini yazın. Boş bıraktığınız günlerde nöbet yok sayılır. Kaydedin.',
+      'Nöbet gününde ana ekrandaki durum kartında nöbet uyarısı çıkar.',
+      'Nöbet JSON ile yüklenmez, yalnızca buradan girilir.']},
+    {t:'6. Yedek ve ipuçları',l:[
+      'Verileriniz yalnızca kendi telefonunuzda (tarayıcıda) saklanır, kimse göremez.',
+      'Tarayıcı verisi temizlenirse program silinir. Düzenli olarak "Kopyala" ile yedekleyin, gerekirse JSON Ekle\'den geri yükleyin.',
+      'Ana ekrana ekleyin: Android Chrome → menü → Uygulamayı yükle. iPhone Safari → Paylaş → Ana Ekrana Ekle.',
+      'Tarih şeridindeki simülasyon düğmesiyle uygulamanın belirli bir gün ve saatte nasıl görüneceğini deneyebilirsiniz.',
+      'Takıldığınız yerde Hakkında penceresindeki WhatsApp düğmesinden geliştiriciye ulaşabilirsiniz.']}
+  ];
+  function closeGuide(){const g=document.getElementById('guideModal');if(g)g.remove();}
+  function openGuide(){
+    closeGuide();
+    const d=document.createElement('div');d.id='guideModal';
+    d.style.cssText='position:fixed;inset:0;z-index:210;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:12px';
+    d.innerHTML='<div style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;width:100%;max-width:440px;max-height:90vh;display:flex;flex-direction:column">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)"><div style="font-weight:800;font-size:16px">Kullanım Rehberi</div><button data-g="x" style="padding:4px 10px;border-radius:8px;font-size:16px;color:var(--muted)" aria-label="Kapat">✕</button></div>'
+      +'<div style="overflow-y:auto;padding:12px 14px">'+G.map((s,i)=>'<details '+(i===0?'open':'')+' style="border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:2px 12px"><summary style="cursor:pointer;font-weight:700;font-size:13px;padding:10px 0">'+s.t+'</summary><ol style="margin:0 0 10px 16px;padding:0;list-style:decimal;font-size:12.5px;line-height:1.55;color:var(--text2)">'+s.l.map(x=>'<li style="margin-bottom:6px">'+x+'</li>').join('')+'</ol></details>').join('')+'</div></div>';
+    d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-g=x]'))closeGuide();});
+    document.body.appendChild(d);
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGuide();});
+  function addBtn(){
+    const wa=document.querySelector('#aboutModal a[href*="wa.me"]');
+    if(!wa||document.getElementById('guideBtn'))return;
+    const b=document.createElement('button');b.id='guideBtn';b.type='button';
+    b.className='flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-bold text-sm btn-primary';
+    b.innerHTML='<i data-lucide="book-open" class="w-4 h-4"></i> Kullanım Rehberi';
+    b.onclick=openGuide;wa.parentElement.insertBefore(b,wa);
+    try{lucide.createIcons();}catch(e){}
+  }
+  addBtn();window.addEventListener('load',addBtn);
+  window.openGuide=openGuide;
+})();
 </script>
 </body>
 </html>

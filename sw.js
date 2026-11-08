@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agenda-now-v4';
+const CACHE_NAME = 'agenda-now-v5';
 const CDN_CACHE = 'agenda-cdn-v4';
 
 // Önbelleğe alınacak dış kaynaklar (index.html'in kullandığı adreslerle aynı olmalı)
@@ -58,3 +58,40 @@ self.addEventListener('fetch', (e) => {
         }
         return res;
       }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // B) İkonlar ve Manifest: Önce önbelleğe bak (Cache First)
+  if (url.pathname.match(/icon-192\.png|icon-512\.png|logo-192\.png|logo-512\.png|apple-touch-icon\.png|manifest\.webmanifest/)) {
+    e.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(req).then((hit) => {
+          if (hit) return hit;
+          return fetch(req).then((res) => {
+            if (cacheable(res)) cache.put(req, res.clone());
+            return res;
+          }).catch(() => new Response('', { status: 504 }));
+        });
+      })
+    );
+    return;
+  }
+
+  // C) Dış Kaynaklar (Tailwind, Lucide, Fontlar, html2canvas): Eskiyi göster, arkada güncelle (Stale While Revalidate)
+  if (url.origin.match(/jsdelivr\.net|unpkg\.com|cdnjs\.cloudflare\.com|fonts\.(googleapis|gstatic)\.com/)) {
+    e.respondWith(
+      caches.open(CDN_CACHE).then((cache) => {
+        return cache.match(req).then((hit) => {
+          const fetchPromise = fetch(req).then((res) => {
+            if (cacheable(res)) cache.put(req, res.clone());
+            return res;
+          }).catch(() => hit);
+          if (hit) e.waitUntil(fetchPromise.catch(() => {}));
+          return hit || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+});

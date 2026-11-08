@@ -22,5 +22,59 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bugünün programı",
+      "short_name": "Bugün",
+      "description": "Bugünün dersleri ve canlı durum",
+      "url": "./index.html?sk=bugun",
+      "icons": [
+        {
+          "src": "logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Haftalık program",
+      "short_name": "Haftalık",
+      "description": "Haftalık ders tablosu",
+      "url": "./index.html?sk=hafta",
+      "icons": [
+        {
+          "src": "logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Programı düzenle",
+      "short_name": "Düzenle",
+      "description": "Ders ekle, zil saatlerini değiştir",
+      "url": "./index.html?sk=program",
+      "icons": [
+        {
+          "src": "logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "JSON yükle",
+      "short_name": "JSON",
+      "description": "Yeni program yükle",
+      "url": "./index.html?sk=json",
+      "icons": [
+        {
+          "src": "logo-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }
