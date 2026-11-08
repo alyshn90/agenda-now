@@ -53,6 +53,9 @@
   ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
   @media print{.no-print{display:none!important}body{background:#fff!important;color:#000!important}}
+  @media (hover: none) and (pointer: coarse) {
+  input, textarea, select { font-size: max(16px, 1em) !important; }
+}
   
   /* Matris Tablo Stilleri */
   .matrix-table{width:100%;border-collapse:separate;border-spacing:4px}
