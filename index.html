@@ -2245,5 +2245,15 @@ window.addEventListener('load',()=>setTimeout(()=>{
   window.openGuide=openGuide;
 })();
 </script>
+ <script>
+(function () {
+  var d = new Date();
+  if (/[?&]kasim/.test(location.search) || (d.getMonth() === 10 && d.getDate() === 24)) {
+    var s = document.createElement('script');
+    s.src = '24kasim.js?v=1';
+    document.body.appendChild(s);
+  }
+})();
+</script>
 </body>
 </html>
