@@ -1,11 +1,12 @@
-const CACHE_NAME = 'agenda-now-v5';
-const CDN_CACHE = 'agenda-cdn-v5';
+const CACHE_NAME = 'agenda-now-v6';
+const CDN_CACHE = 'agenda-cdn-v6';
 
 // Önbelleğe alınacak dış kaynaklar (index.html'in kullandığı adreslerle aynı olmalı)
 const CDN_URLS = [
   'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11',
   'https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js',
   'https://cdn.jsdelivr.net/npm/html2canvas-pro@2.3.3/dist/html2canvas-pro.min.js',
+  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js', // 24 Kasım konfetisi
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap'
 ];
 
@@ -18,7 +19,7 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     Promise.all([
       caches.open(CACHE_NAME).then((cache) =>
-        Promise.all(['./', './index.html'].map((u) => cache.add(u).catch(() => {})))
+        Promise.all(['./', './index.html', './24kasim.js'].map((u) => cache.add(u).catch(() => {})))
       ),
       caches.open(CDN_CACHE).then((cache) =>
         Promise.all(CDN_URLS.map((u) => cache.add(u).catch((err) => console.log('Önbelleğe alma hatası:', u, err))))
@@ -58,6 +59,20 @@ self.addEventListener('fetch', (e) => {
         }
         return res;
       }).catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // A2) 24 Kasım sürpriz dosyası: önce ağ, çevrimdışıysa önbellek (?v=1 gibi parametreleri yok sayar)
+  if (url.origin === self.location.origin && url.pathname.endsWith('/24kasim.js')) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (cacheable(res)) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('./24kasim.js', clone));
+        }
+        return res;
+      }).catch(() => caches.match('./24kasim.js', { ignoreSearch: true }).then((hit) => hit || new Response('', { status: 504 })))
     );
     return;
   }
