@@ -82,6 +82,10 @@
     @keyframes tdFade { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
     .splash-text { color: #fff; font-size: 26px; font-weight: 800; text-align: center; padding: 0 20px;
       text-shadow: 0 0 20px rgba(245,158,11,.8); animation: tdScale 1s ease-out; }
+    .splash-sign { margin-top: 22px; text-align: center; color: #fff; opacity: 0; animation: tdSign 1s ease-out 1s forwards; }
+    .splash-sign b { display: block; font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+    .splash-sign span { display: block; font-size: 12px; opacity: .75; margin-top: 2px; }
+    @keyframes tdSign { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     @keyframes tdScale { 0% { transform: scale(.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     @media (prefers-reduced-motion: reduce) {
       .envelope-icon, .bday-badge, .confetti-particle { animation: none !important; }
@@ -91,47 +95,172 @@
   document.head.appendChild(style);
 
   // --- 2. MESAJ HAVUZLARI ---
-  // Genel mesajlar: [İsim] otomatik olarak öğretmenin adıyla değişir (sınıf profilindeyken "Öğretmenim" yazar)
+  // Genel mesajlar (105): [İsim] Hocam → "Ali Hocam" (sınıf profilinde sadece "Hocam")
   var GENEL_MESAJLAR = {
+    sabah: [
+      `Günaydın [İsim] Hocam! Umarız bugün kahveniz sıcak, enerjiniz yerinde, öğrencileriniz de uslu olur.`,
+      `Yeni bir gün, yeni hikâyeler... Bugün sınıfınızda güzel şeyler yaşanması dileğiyle.`,
+      `Okulun kapısından girerken küçük bir hatırlatma: Yaptığınız iş gerçekten çok kıymetli. İyi ki varsınız [İsim] Hocam.`,
+      `Bugün takvimde sizin gününüz yazıyor. Güne kendinizi biraz şımartarak başlayabilirsiniz.`,
+      `Alarm çaldı, kahve hazırlandı, okul yolu göründü... Öğretmenlik yine mesaiye başladı. Güzel bir gün olsun!`,
+      `Her sabah sınıfa girerken yeni bir şansa kapı açıyorsunuz. Bugün de güzel geçsin [İsim] Hocam.`,
+      `Umarız bugün öğrencilerinizden en az birinin yüzünde sizin sayenizde güzel bir gülümseme oluşur.`,
+      `Bugün biraz daha fazla tebessüm etmek serbest. Sonuçta 24 Kasım!`,
+      `Henüz zil çalmadı. Günün tadını çıkarmak için birkaç dakikanız var. Acele etmeyin.`,
+      `Bir okulun en güzel tarafı, içinde sizin gibi emek veren insanların olması. Günaydın [İsim] Hocam!`,
+      `Bugün kendinize de öğrencilerinize gösterdiğiniz özeni göstermeyi unutmayın.`,
+      `Umarız bugün yoklama tam, sınıf sakin, akıllı tahta sorunsuz olur!`,
+      `Yeni bir günün ilk dakikaları... Bırakın bugünün güzel sürprizleri sizi bulsun.`,
+      `Öğretmenlik biraz sabır, biraz emek, biraz da her sabah yeniden başlamayı bilmektir. İyi ki bu yolun bir parçasısınız.`,
+      `Günaydın [İsim] Hocam! Bugün derslerden önce kendinize güzel bir gün geçirmeyi hedef koyun.`
+    ],
     ders: [
-      "Atatürk: 'Öğretmenler, yeni nesil sizin eseriniz olacaktır.'",
-      "Bugün sınıfa girdiğinde, birinin yıllar sonra 'Bir öğretmenim vardı...' diye başlayacağı cümlesine giriyorsun.",
-      "Şu an tahtaya yazdığın bir harf, yarın birinin hayatına yön verecek. Öğretmenler Günün kutlu olsun!",
-      "Öğrencilerinin gözündeki o ışığı hatırla. İyi ki varsın [İsim] Öğretmenim."
+      `Şu an anlattığınız konu belki sınavdan sonra unutulacak ama ona öğretme şekliniz unutulmayacak.`,
+      `Her öğrencinin öğrenme yolu farklı. Siz her gün o yolları keşfetmeye çalışıyorsunuz. Emeğinize sağlık.`,
+      `Bazen bir öğrencinin "Öğretmenim, şimdi anladım!" demesi bütün yorgunluğa değer.`,
+      `Tahtaya yazdığınız her şey silinebilir ama öğrencilerinizde bıraktığınız izler kolay kolay silinmez.`,
+      `Bugün sınıfta küçük bir keşfin, güzel bir sorunun veya unutulmayacak bir anın yaşanması dileğiyle.`,
+      `Her sorunun cevabını bilmek zorunda değilsiniz. Bazen birlikte araştırmak da öğretmenin en güzel tarafıdır.`,
+      `Bir öğrencinin gözündeki merak, bütün ders planlarından daha değerlidir.`,
+      `Bugün de birilerinin dünyasına yeni bir pencere açıyorsunuz [İsim] Hocam.`,
+      `Sınıfta herkes aynı anda öğrenmeyebilir. Önemli olan, kimsenin öğrenme isteğini kaybetmemesi.`,
+      `Bir gün öğrencilerinizden biri sizi hatırlayıp gülümseyecek. Belki de bugün yaşadığınız küçük bir an yüzünden.`,
+      `Öğretmenliğin güzel tarafı şu: Bazen siz bir şey anlatırken, öğrencileriniz size de yeni şeyler öğretir.`,
+      `Bugün bir öğrencinin sorduğu soruya şaşırmaya hazır olun. En güzel dersler bazen beklenmedik yerden çıkar.`,
+      `Müfredatın yetişmesi önemli ama öğrencinin gerçekten anlaması daha önemli. Kolay gelsin [İsim] Hocam.`,
+      `Atatürk'ün "Öğretmenler, yeni nesil sizin eseriniz olacaktır." sözü, yaptığınız işin sorumluluğunu ve değerini ne güzel anlatıyor.`,
+      `Dersin sonunda her öğrenci her şeyi öğrenmiş olmayabilir. Ama sizin gösterdiğiniz çaba kesinlikle boşa gitmiyor.`
     ],
     teneffus: [
-      "Bir fincan çayı hak ettin [İsim] öğretmenim. Şimdi 10 dakika sadece kendin için.",
-      "Dünyayı değiştirmek yorucu iştir. Bu teneffüs, senin hak ettiğin mola.",
-      "İyi ki varsın [İsim]. O zil sadece çocuklar için değil, senin de nefes alman için çalıyor."
+      `Zil çaldı! Şimdi birkaç dakika hiçbir yere yetişmek zorunda değilsiniz.`,
+      `Çayınızı alın [İsim] Hocam. Dünya siz on dakika dinlenince de dönmeye devam ediyor.`,
+      `Bir teneffüs, bir kahve ve mümkünse kimsenin "Hocam bir şey sorabilir miyim?" demediği birkaç dakika...`,
+      `Öğretmenler odasında bugün güzel bir sohbet dönüyorsa kaçırmayın. Bazen en iyi mola budur.`,
+      `Derin bir nefes alın. Bir sonraki ders için enerji depolama zamanı.`,
+      `Koridorda koşan öğrenciler, çalan zil, bitmeyen sorular... Okulun klasik bir günü daha!`,
+      `Çayınızı soğutmadan içebildiğiniz bir teneffüs diliyoruz. Biliyoruz, bu bazen büyük bir başarı.`,
+      `Her teneffüs bir sonraki derse hazırlık yapmak zorunda değilsiniz. Biraz da dinlenin.`,
+      `Bugün öğretmenler odasında kahkaha eksik olmasın. İyi bir mola, iyi bir derse dönüşür.`,
+      `Biraz oturun, biraz soluklanın. Ayakta geçen saatlerin hakkını verin.`,
+      `Şu an yapmanız gereken tek şey: Birkaç dakika kendinize zaman ayırmak.`,
+      `Teneffüs kısa olabilir ama güzel bir sohbetin süresi ölçülmez.`,
+      `Bugün bir meslektaşınıza da güzel bir 24 Kasım dileği iletmeyi unutmayın.`,
+      `Bir sonraki zil çalana kadar okulun en önemli işi dinlenmek!`,
+      `Küçük bir hatırlatma: Her şeye yetişmeye çalışırken kendinizi ihmal etmeyin [İsim] Hocam.`
     ],
     ogle: [
-      "Bir fincan kahveyi hak ettin [İsim] öğretmenim. En iyi öğretmen, dinlenmeyi bilen öğretmendir.",
-      "Öğle arası... Yemek kadar, o güzel kalbini de dinlendirmeyi unutma. Öğretmenler Günün kutlu olsun.",
-      "Bir öğretmen, sonsuzluğa dokunan bir iz bırakır. Afiyet olsun, iyi ki varsın."
+      `Öğle arası geldi! Bugün yemeğinizi acele etmeden yiyin. Zil biraz bekleyebilir.`,
+      `Sabahın nasıl geçtiğini anlamadınız bile, değil mi? Şimdi biraz mola zamanı.`,
+      `Güzel bir yemek, güzel bir sohbet... Günün ikinci yarısına böyle hazırlanılır.`,
+      `Bugün menüde ne var bilmiyoruz ama umarız öğretmenler odasında güzel bir sohbet vardır.`,
+      `Ders anlatmak enerji ister. O enerjiyi yenilemek için kendinize vakit ayırın.`,
+      `Öğle arasında konuşulacak konuların sınavlar ve nöbetlerden biraz uzak olması dileğiyle!`,
+      `Bugünün en güzel sorusu: "Ne yesek?" Umarız cevabı da en az kendisi kadar güzeldir.`,
+      `Biraz okuldan, biraz derslerden uzaklaşın. Öğleden sonra yine görüşeceksiniz!`,
+      `Kahvenizi alın, yemeğinizi yiyin. Bugün kendinize ayırdığınız zaman da önemli.`,
+      `Öğle arası kısa, yapılacak işler uzun... Ama bugün biraz yavaşlamak için güzel bir sebebiniz var.`,
+      `Umarız bugün yemeğinizi soğutmadan yiyebilirsiniz. Öğretmenlikte küçük mutlulukların kıymeti büyük!`,
+      `Öğrencilerin teneffüsü, öğretmenlerin öğle arası... Herkesin bir nefes almaya ihtiyacı var.`,
+      `Bugün bir meslektaşınızla güzel bir sohbet edin. Aynı yoldan geçen insanlarla konuşmak iyi gelir.`,
+      `Günün yarısı tamamlandı. Şimdi ikinci yarıya güzel bir enerjiyle devam etme zamanı.`,
+      `Afiyet olsun [İsim] Hocam. Bugün biraz da kendinizi düşünün.`
     ],
     bos: [
-      "Bu boşluk bir mola değil [İsim], belki de bugünün en çok ihtiyaç duyduğun sessizliği.",
-      "Boş ders! Kahveni al ve pencereden dışarıyı izle. Bunu hak ettin.",
-      "Bazı anlar boştur ki, en güzel fikirler içine doğsun. İyi ki öğretmensin."
+      `Boş ders! Takvim bugün size küçük bir hediye vermiş. Tadını çıkarın [İsim] Hocam.`,
+      `Hazırlanacak dersler, kontrol edilecek defterler... Hepsi bekleyebilir. Önce bir kahve!`,
+      `Şu an okulun en kıskanılacak insanlarından biri olabilirsiniz. Boş dersin keyfini çıkarın.`,
+      `Bazen hiçbir şey yapmadan oturmak da günün en verimli aktivitesidir.`,
+      `Bu ders size ait. İsterseniz kahve için, isterseniz sadece pencereden dışarı bakın.`,
+      `Bir boş dersin kıymetini en iyi öğretmenler bilir. Ne kadar sürdüğünü de!`,
+      `Bugün ajandanıza yeni bir madde ekleyin: Biraz dinlenmek.`,
+      `Eğer bu süreyi evraklarla doldurmazsanız, bizce gayet başarılı bir karar vermiş olursunuz.`,
+      `Boş dersiniz var. Hayat bazen küçük güzelliklerle karşımıza çıkıyor.`,
+      `Bugün kimse sizden bir şey istemeden geçen birkaç dakika diliyoruz!`,
+      `Bir kahve, birkaç dakika sessizlik ve yetişme telaşı olmadan geçen bir ders... İşte küçük mutluluk.`,
+      `Her boşluk doldurulmak zorunda değil [İsim] Hocam. Bazen boş kalması en güzelidir.`,
+      `Resmî olmayan tavsiye: Bu derste kendinize bir iyilik yapın.`,
+      `Biraz dinlenin. Sonuçta öğretmenlerin de şarj olmaya ihtiyacı var.`,
+      `Boş dersin tadını çıkarın. Bir sonraki dersin ne getireceğini kim bilir?`
+    ],
+    aksam: [
+      `Bugünlük okul mesaisi tamamlandı [İsim] Hocam. Şimdi sıra kendinize ayıracağınız zamanda.`,
+      `Çantanızı bir kenara bırakın. Bugünlük okulda yapılacaklar listesi kapandı.`,
+      `Belki bugün her şey planladığınız gibi gitmedi. Olsun, yarın yeni bir gün.`,
+      `Bir gün daha geride kaldı. Bugün gösterdiğiniz sabır ve emek için kendinize teşekkür edin.`,
+      `Okulun kapısından çıkarken günün telaşını da içeride bırakın. Güzel bir akşam sizi bekliyor.`,
+      `Yarın yine zil çalacak, öğrenciler gelecek, dersler başlayacak. Ama bu akşamın tadını çıkarmak sizin elinizde.`,
+      `Bugün bir öğrencinin yüzünde gülümsemeye sebep olmuş olabilirsiniz. Bunu bilmeniz gerekmiyor, güzel olan da bu.`,
+      `Her gün mükemmel geçmek zorunda değil. Bugün elinizden geleni yaptıysanız yeterli.`,
+      `Akşam oldu. Defterler kapansın, bilgisayarlar dinlensin, öğretmenler biraz kendine gelsin!`,
+      `Bugün kendinize ayırdığınız vakit, yarınki enerjinizin en güzel yatırımıdır.`,
+      `Öğretmenler Gününüz kutlu olsun [İsim] Hocam. Umarız bugün güzel anılar biriktirmişsinizdir.`,
+      `Bugün de birçok öğrencinin hayatında küçük veya büyük bir iz bıraktınız. Emeğinize sağlık.`,
+      `Şimdi biraz dinlenin. Yarın yine anlatacak çok şeyiniz olacak.`,
+      `Günün sonunda geriye kalan en güzel şey, yaptığınız işin birilerinin hayatına dokunmuş olması.`,
+      `Güzel bir akşam, huzurlu bir dinlenme ve yarına güzel bir başlangıç diliyoruz.`
+    ],
+    genel: [
+      `Bugün okul programınız boş olabilir ama 24 Kasım sizin gününüz. Öğretmenler Gününüz kutlu olsun [İsim] Hocam!`,
+      `Bugün alarmı biraz daha geç kapatmak için güzel bir sebebiniz var. İyi dinlenmeler!`,
+      `Bugün zil sizin için çalmıyor. Umarız gününüz de en az bu haber kadar güzeldir.`,
+      `Öğretmenlik sadece ders saatlerinden ibaret değil. Bugün bunu hatırlamak ve kendinize vakit ayırmak için güzel bir gün.`,
+      `Bugün okulun telaşından uzakta, sevdiklerinizle güzel vakit geçirmeniz dileğiyle.`,
+      `Takvimde bugün 24 Kasım yazıyor. Bu özel günün tadını çıkarın [İsim] Hocam.`,
+      `Bugün ders anlatmayabilirsiniz ama öğretmenliğin hayatınızdaki yeri değişmiyor. İyi ki varsınız.`,
+      `Bugün biraz kendinize vakit ayırın. Yarın yine öğrenciler, dersler ve okul heyecanı sizi bekliyor.`,
+      `Bugün kendinize küçük bir hediye alın. Bunu hak etmek için zaten yeterince sebebiniz var.`,
+      `Okuldan uzak, telaştan uzak, sadece size ait güzel bir gün olsun.`,
+      `Bugün ders planı hazırlamak yok, zil beklemek yok. Sadece güzel bir 24 Kasım!`,
+      `Öğretmenler Gününüz kutlu olsun [İsim] Hocam. Bugün yüzünüzü güldüren pek çok şeyle karşılaşmanız dileğiyle.`,
+      `Bir öğretmenin emeği yalnızca okulda geçen saatlerle ölçülmez. Bugün sizin gününüz!`,
+      `Bugün biraz dinlenin, biraz gezin, biraz da hiçbir şey yapmayın. Hepsi serbest!`,
+      `Takvimdeki en güzel meslek günlerinden biri. Umarız sizin için de unutulmaz bir 24 Kasım olur.`
     ]
   };
 
-  // Kişiye özel: anahtar = programdaki öğretmen kodu VEYA ad soyad (büyük/küçük, Türkçe harf, tire fark etmez)
+  // Kişiye özel mesajlar. Anahtar = öğretmen kodu VEYA ad soyad (büyük/küçük harf, Türkçe karakter, tire fark etmez).
+  // "ozel": o gün ilk zarf açılışında MUTLAKA gösterilir; sonra kategoriden rastgele (aynı gün tekrar etmez).
   var OZEL_MESAJLAR = {
-    "ali-sahin": [
-      "Ali Hocam, bu 24 Kasım'da senin gibi bir öğretmenin emeğini unutmadık. İyi ki varsın.",
-      "Ali Hocam, bugün sınıfa girdiğinde bıraktığın izi düşündüm. İyi ki varsın.",
-      "Bu 24 Kasım'da aklıma gelen ilk isim sen oldun Ali Hocam."
-    ],
-    "neslihan-okur": [
-      "Neslihan Öğretmenim, bana sadece ders değil, insan olmayı da öğrettiniz. Gününüz kutlu olsun.",
-      "Neslihan Hocam, sizin gibi bir öğretmene sahip olmak bir ayrıcalıktı. İyi ki varsınız.",
-      "Neslihan Öğretmenim, 24 Kasım'ınız kutlu olsun. Işığınız hiç sönmesin."
-    ]
+    "neslihan-okur": {
+      ozel: `Neslihan, ilk yıl hem heyecanlı hem yorucu, biliyorum. Yorulduğunda şunu hiç unutma: Ben her zaman, her konuda yanında olmaya ve sana destek olmaya hazırım.`,
+      sabah: [
+        `Günaydın Neslihan! İlk Öğretmenler Gününe hoş geldin. Mesleğinin henüz başındasın ama bu işe kattığın sevgi ve heyecan şimdiden kendini belli ediyor. İlk 24 Kasım'ın kutlu olsun!`,
+        `Bugün senin ilk Öğretmenler Günün. Umarım yıllar sonra da bugünkü heyecanını ve gözlerindeki o ışığı kaybetmezsin.`
+      ],
+      ders: [
+        `Daha yolun çok başındasın ama öğrencilerini bu kadar kısa sürede sevmiş olman çok güzel. Bence öğretmenliğin en güzel tarafını şimdiden yakaladın.`,
+        `Bir öğrencinin seni sevmesi için kusursuz olman gerekmiyor. Onu gerçekten önemsediğini hissettirmesi yeterli. Sen bunu çok güzel yapıyorsun.`,
+        `Belki bugün anlattığın konudan çok, öğrencilerine nasıl davrandığını hatırlayacaklar. Bazen öğretmenliğin en güzel tarafı tam da budur.`,
+        `Bazen bir öğrencinin "Öğretmenim, sizi çok seviyorum." demesi bütün günün yorgunluğunu unutturur. Umarım bugün böyle güzel anlar yaşarsın.`,
+        `Her şeyi ilk günden mükemmel yapmak zorunda değilsin. Öğrenmeye devam etmen ve öğrencilerini önemsemen zaten çok kıymetli.`
+      ],
+      teneffus: [
+        `İlk yılın heyecanıyla her şeye yetişmeye çalışıyor olabilirsin. Biraz yavaşla Neslihan, her şeyi hemen öğrenmek zorunda değilsin.`,
+        `Bugün öğrencilerini sevindirmek kadar kendini de mutlu etmeyi unutma. Biraz kahve, biraz sohbet, bolca gülümseme!`,
+        `Her teneffüste bir şeyler yetiştirmeye çalışma. Bazen arkadaşlarınla oturup gülmek de günün en güzel kısmıdır.`,
+        `Öğretmenler odasında güzel bir sohbet, sıcak bir çay... Bazen ihtiyacımız olan tek şey bu. Teneffüsün keyfini çıkar!`
+      ],
+      ogle: [
+        `Neslihan, öğrencilerine gösterdiğin özeni bugün biraz da kendine göster. Güzelce yemeğini ye, dinlen ve günün tadını çıkar.`,
+        `İlk yılın, ilk heyecanların, ilk anıların... Eminim ileride bugünü hatırladığında yüzünde güzel bir gülümseme olacak.`
+      ],
+      bos: [
+        `Mesleğinin ilk yılında öğrenecek çok şeyin var ama hepsini bugün öğrenmek zorunda değilsin. Acele etme, zamanla her şey yerine oturacak.`,
+        `Bugün biraz dinlen. Çünkü o enerjik ve güler yüzlü halini korumanı istiyoruz!`
+      ],
+      aksam: [
+        `İlk Öğretmenler Gününün sonuna geldin Neslihan. Belki bugün çok yoruldun ama umarım güzel anılar da biriktirdin. Nice güzel 24 Kasım'lara!`,
+        `Seninle gurur duyuyorum. Mesleğinin başında bu kadar severek, isteyerek ve içtenlikle çalışmanı görmek gerçekten çok güzel. İyi ki öğretmen olmuşsun!`
+      ],
+      genel: [
+        `Neslihan, umarım yıllar sonra da öğrencilerinin isimlerini tek tek hatırlayan, onların başarılarına en az kendileri kadar sevinen o öğretmen olarak kalırsın.`,
+        `Neslihan, kendine güven. Bu meslekte güzel işler yapacağına inanıyorum. Ama ne olursa olsun önce kendin olmayı unutma.`
+      ]
+    }
   };
 
   // Mesajın altındaki imza (istemezsen imzayı tamamen kaldırmak için ad: '' yap)
-  var GELISTIRICI = { ad: 'Ali Şahin', unvan: 'Agenda Now geliştiricisi' };
+  var GELISTIRICI = { ad: 'Ali Şahin', unvan: 'Agenda Now' };
 
   // --- 3. YARDIMCILAR ---
   function normalize(str) {
@@ -142,14 +271,49 @@
   }
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-  function getOzelMesaj() {
+  function getOzelSet() {
     if (getPType() !== 'teacher') return null;          // sınıf profilinde kişisel mesaj gösterme
     var pid = normalize(getPId()), pname = normalize(getName());
     for (var key in OZEL_MESAJLAR) {
       var k = normalize(key);
-      if (k && (k === pid || k === pname)) return OZEL_MESAJLAR[key];
+      if (k && (k === pid || k === pname)) return { key: k, set: OZEL_MESAJLAR[key] };
     }
     return null;
+  }
+
+  function todayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  // Test modunda (?kasim=1) bugünün kayıtlarını sıfırla; böylece her sayfa yenilemede baştan denenebilir
+  if (FORCE) {
+    try {
+      Object.keys(localStorage).filter(function (k) { return k.indexOf('og24_') === 0; })
+        .forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+  }
+
+  // Aynı gün, aynı kişiye, aynı kategoriden tekrar mesaj göstermez (hepsi bitince başa döner)
+  function pickNoRepeat(arr, storeKey) {
+    var used = [];
+    try { used = JSON.parse(lsGet(storeKey) || '[]'); } catch (e) { used = []; }
+    var avail = [];
+    for (var i = 0; i < arr.length; i++) if (used.indexOf(i) === -1) avail.push(i);
+    if (!avail.length) { used = []; for (var j = 0; j < arr.length; j++) avail.push(j); }
+    var idx = avail[Math.floor(Math.random() * avail.length)];
+    used.push(idx);
+    lsSet(storeKey, JSON.stringify(used));
+    return arr[idx];
+  }
+
+  // [İsim] Hocam → "Ali Hocam" (öğretmen profili) ya da "Hocam" (sınıf profili)
+  function fillName(msg) {
+    var first = getPType() === 'teacher' ? getName().trim().split(/\s+/)[0] : '';
+    return msg.replace(/\[İsim\] Hocam/g, first ? first + ' Hocam' : 'Hocam')
+              .replace(/\[İsim\]/g, first || 'Hocam');
   }
 
   // --- 4. TARİH KUTUSU (dateLabel'a DOKUNMUYORUZ: uygulama her saniye üzerine yazıyor) ---
@@ -244,9 +408,14 @@
   }
 
   function currentPool() {
-    var c = getCache(), cur = c && c.cur;
+    var c = getCache();
+    if (!c) return 'genel';
     var map = { lesson: 'ders', 'break': 'teneffus', ara: 'teneffus', lunch: 'ogle', free: 'bos' };
-    return (cur && map[cur.kind]) || 'ders';
+    if (c.cur) return map[c.cur.kind] || 'ders';
+    var rows = c.rows || [];
+    if (!rows.length) return 'genel';
+    var m; try { m = now().min; } catch (e) { return 'genel'; }
+    return m >= rows[rows.length - 1].e ? 'aksam' : 'sabah';
   }
 
   window.toggleBirthdayFlip = function (e) {
@@ -256,13 +425,18 @@
     var env = document.getElementById('bdayEnvelope');
     if (!inner) return;
 
-    var msg, ozel = getOzelMesaj();
+    var msg, pool = currentPool(), today = todayKey(), ozel = getOzelSet();
+    var who = normalize(getPId()) || normalize(getName()) || 'x';
     if (ozel) {
-      msg = pick(ozel);
+      var firstKey = 'og24_ilk_' + today + '_' + ozel.key;
+      if (ozel.set.ozel && !lsGet(firstKey)) {          // o günkü ilk açılışta sabit özel mesaj
+        msg = ozel.set.ozel;
+        lsSet(firstKey, '1');
+      } else {
+        msg = pickNoRepeat(ozel.set[pool] || ozel.set.genel, 'og24_o_' + today + '_' + ozel.key + '_' + pool);
+      }
     } else {
-      msg = pick(GENEL_MESAJLAR[currentPool()]);
-      var name = getPType() === 'teacher' ? getName() : '';
-      msg = msg.replace(/\[İsim\]/g, name || 'Öğretmenim');
+      msg = fillName(pickNoRepeat(GENEL_MESAJLAR[pool], 'og24_g_' + today + '_' + who + '_' + pool));
     }
     document.getElementById('liveCardBackMsg').textContent = msg;
     var sign = document.getElementById('liveCardSign');
@@ -350,7 +524,8 @@
       startConfetti({ duration: 2800, rain: false });   // yazının ÜSTÜNDE görünür (z-index 10000)
       var splash = document.createElement('div');
       splash.id = 'teacherDaySplash';
-      splash.innerHTML = '<div class="splash-text">24 Kasım<br><span style="color:#FCD34D">Öğretmenler Günü Kutlu Olsun!</span></div>';
+      splash.innerHTML = '<div class="splash-text">24 Kasım<br><span style="color:#FCD34D">Öğretmenler Günü Kutlu Olsun!</span></div>' +
+        (GELISTIRICI.ad ? '<div class="splash-sign"><b>— ' + GELISTIRICI.ad + '</b><span>' + GELISTIRICI.unvan + '</span></div>' : '');
       document.body.appendChild(splash);
       setTimeout(function () { if (splash.parentNode) splash.remove(); }, 5000);
     }
