@@ -47,7 +47,11 @@
       100% { bottom: 110%;  transform: translateX(-5px) rotate(360deg); opacity: 0; }
     }
     /* parçacıklar hariç diğer çocuklar öne gelsin */
-    .bday-badge > :not(.confetti-particle) { position: relative; z-index: 1; }
+    .bday-badge > :not(.confetti-particle):not(.bday-ticker) { position: relative; z-index: 1; }
+    .bday-ticker { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 3; display: none; align-items: center;
+      overflow: hidden; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s; font-weight: 700;
+      background: linear-gradient(135deg, rgba(245,158,11,.28), rgba(139,92,246,.30)), linear-gradient(var(--chip), var(--chip)); }
+    .bday-ticker span { flex: none; white-space: nowrap; }
 
     /* Zarf */
     @keyframes envelopeWiggle { 0%,100% { transform: rotate(0) scale(1); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
@@ -262,6 +266,9 @@
   // Mesajın altındaki imza (istemezsen imzayı tamamen kaldırmak için ad: '' yap)
   var GELISTIRICI = { ad: 'Ali Şahin', unvan: 'Agenda Now' };
 
+  // Tarih kutusunda kayan yazı (haber bandı gibi)
+  var TICKER = { metin: '🎉  Öğretmenler Gününüz Kutlu Olsun  🎉', aralikMs: 30000, ilkMs: 12000, pxPerSn: 55 };
+
   // --- 3. YARDIMCILAR ---
   function normalize(str) {
     return String(str || '').toLowerCase()
@@ -324,6 +331,12 @@
     if (pill.classList.contains('bday-badge')) return;
     pill.classList.add('bday-badge');
     pill.insertAdjacentHTML('afterbegin', '<div class="confetti-particle"></div>'.repeat(6));
+    var tk = document.createElement('div');
+    tk.className = 'bday-ticker';
+    var tspan = document.createElement('span');
+    tspan.textContent = TICKER.metin;
+    tk.appendChild(tspan);
+    pill.appendChild(tk);
   }
 
   // --- KONFETİ (kendi tuvali; istenirse bir kartın üzerinde "delik" bırakır) ---
@@ -516,6 +529,33 @@
     if (typeof origRenderStatus === 'function') origRenderStatus.apply(this, arguments);
     try { applyDateBadge(); injectEnhancements(); } catch (e) { console.warn('24kasim:', e); }
   };
+
+  // --- KAYAN YAZI ---
+  var tickerBusy = false;
+  function runTicker() {
+    if (tickerBusy || document.hidden) return;
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var t = document.querySelector('.bday-ticker');
+    if (!t) return;
+    var span = t.firstChild;
+    if (!span || !span.animate) return;
+    tickerBusy = true;
+    t.style.display = 'flex';
+    t.style.opacity = '0';
+    requestAnimationFrame(function () {
+      t.style.opacity = '1';
+      var W = t.clientWidth, T = span.offsetWidth;
+      var dur = Math.max(5000, (W + T) / TICKER.pxPerSn * 1000);
+      var a = span.animate(
+        [{ transform: 'translateX(' + W + 'px)' }, { transform: 'translateX(' + (-T) + 'px)' }],
+        { duration: dur, easing: 'linear' });
+      a.onfinish = function () {
+        t.style.opacity = '0';
+        setTimeout(function () { t.style.display = 'none'; tickerBusy = false; }, 300);
+      };
+    });
+  }
+  setTimeout(function () { runTicker(); setInterval(runTicker, TICKER.aralikMs); }, TICKER.ilkMs);
 
   // --- 7. İLK AÇILIŞ KONFETİSİ (günde bir kez) ---
   function triggerFirstOpen() {
