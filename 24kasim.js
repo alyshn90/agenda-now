@@ -395,7 +395,7 @@
   }
 
   // --- 5. ZARF + 3D KART ---
-  var isFlipped = false, flipTimeout = null, lastState = null;
+  var isFlipped = false, flipTimeout = null, lastState = null, specialTimer = null;
 
   function closeCard() {
     var inner = document.getElementById('liveCardInner');
@@ -404,6 +404,7 @@
     if (env) env.style.display = 'inline-flex';
     isFlipped = false;
     clearTimeout(flipTimeout);
+    clearTimeout(specialTimer);
     stopConfetti();
   }
 
@@ -431,7 +432,9 @@
       var firstKey = 'og24_ilk_' + today + '_' + ozel.key;
       if (ozel.set.ozel && !lsGet(firstKey)) {          // o günkü ilk açılışta sabit özel mesaj
         msg = ozel.set.ozel;
-        lsSet(firstKey, '1');
+        // yanlışlıkla açıp kapatırsa kaybolmasın: 8 sn açık kalırsa "görüldü" say
+        clearTimeout(specialTimer);
+        specialTimer = setTimeout(function () { if (isFlipped) lsSet(firstKey, '1'); }, 8000);
       } else {
         msg = pickNoRepeat(ozel.set[pool] || ozel.set.genel, 'og24_o_' + today + '_' + ozel.key + '_' + pool);
       }
@@ -516,11 +519,7 @@
 
   // --- 7. İLK AÇILIŞ KONFETİSİ (günde bir kez) ---
   function triggerFirstOpen() {
-    var key = 'ogretmenlergunu_' + new Date().toISOString().slice(0, 10);
-    try { if (!FORCE && localStorage.getItem(key)) return; } catch (e) {}
-
     function show() {
-      try { localStorage.setItem(key, '1'); } catch (e) {}
       startConfetti({ duration: 2800, rain: false });   // yazının ÜSTÜNDE görünür (z-index 10000)
       var splash = document.createElement('div');
       splash.id = 'teacherDaySplash';
